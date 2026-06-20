@@ -90,6 +90,23 @@ The Rust logic is unit-tested on the host:
 cargo test
 ```
 
+The plugin is also tested end-to-end through Typst with
+[tytanic](https://typst-community.github.io/tytanic/). Each test renders an
+alphanumeric spritesheet, slices it back apart with `spryst`, re-lays the
+sprites into a grid, and checks the result is pixel-identical to the original —
+so a slicing or coordinate-maths regression fails the build.
+
+```sh
+just test-typst                       # run every case (regenerates fixtures if missing)
+just test-typst reassemble/c8-plain   # one test
+just test-typst -e 'glob:"*sep*"'     # a test-set expression
+```
+
+The PNG fixtures under `typst/tests/fixtures/` are committed. Regenerate them
+with `just gen-fixtures` after changing the cases, the glyph set, or the PPI
+(`PPI` in `typst/tests/lib.typ`, mirrored by `default.ppi` in `typst.toml`).
+Both require the [Buenard](https://fonts.google.com/specimen/Buenard) font.
+
 > **Note:** `build/` is git-ignored. If you distribute this as a Typst package,
 > commit the built `build/spryst.wasm` (or adjust the `plugin(...)` path in
 > `spryst.typ`) so consumers don't have to compile it themselves.

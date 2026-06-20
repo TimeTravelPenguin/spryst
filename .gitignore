@@ -1,2 +1,8 @@
 target
 build
+
+# Tytanic test artifacts (committed fixtures under tests/fixtures/ are kept).
+typst/tests/**/out
+typst/tests/**/diff
+
+.DS_Store

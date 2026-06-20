@@ -19,3 +19,55 @@ build:
 clean:
     rm -rf typst/wasm
     rm -rf rust/target
+
+# Render the spritesheet PNG fixtures the Typst tests slice (commit the result).
+# Re-run after changing the cases, the glyph set, or PPI.
+gen-fixtures:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    ppi=300
+    fixtures="typst/tests/fixtures"
+
+    # tag => "cols sep"; tags match the read(...) paths in each test's typ files.
+    cases=(
+      "c7-plain:7 false"
+      "c7-sep:7 true"
+      "c8-plain:8 false"
+      "c8-sep:8 true"
+      "c9-plain:9 false"
+      "c9-sep:9 true"
+    )
+
+    # Capture first; piping into `grep -q` would SIGPIPE typst and trip pipefail.
+    if ! typst fonts | grep -i buenard >/dev/null; then
+      echo "error: the Buenard font is not installed (https://fonts.google.com/specimen/Buenard)" >&2
+      exit 1
+    fi
+
+    mkdir -p "$fixtures"
+
+    for case in "${cases[@]}"; do
+      tag="${case%%:*}"
+      read -r cols sep <<<"${case#*:}"
+
+      typst compile --root typst --ppi "$ppi" \
+        --input "cols=$cols" --input "ppi=$ppi" --input "sep=$sep" \
+        typst/tests/source.typ "$fixtures/$tag.png"
+
+      echo "wrote fixtures/$tag.png (cols=$cols sep=$sep)"
+    done
+
+# Run the Typst round-trip tests with tytanic (extra args go to `tt run`).
+# Generates fixtures first if missing. E.g. `just test-typst -e 'glob:"*sep*"'`.
+test-typst *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    if ! compgen -G "typst/tests/fixtures/*.png" >/dev/null; then
+      just gen-fixtures
+    fi
+
+    # --no-export-ephemeral: our tests are ephemeral, so skip writing the
+    # regenerated reference PNGs into each test's ref/ dir on every run.
+    tt run --root typst --no-export-ephemeral {{ args }}

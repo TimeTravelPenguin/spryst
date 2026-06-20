@@ -1,0 +1,17 @@
+[package]
+name = "spryst"
+version = "0.1.0"
+entrypoint = "src/lib.typ"
+authors = ["Phillip Smith"]
+license = "MIT"
+description = "Slice a spritesheet into its individual sprites."
+
+# Tytanic test runner. `ppi` must match `PPI` in `tests/lib.typ` so that 32px
+# sprite cells land on whole pixels. Comparison is exact (no per-pixel slack).
+[tool.tytanic]
+tests = "tests"
+
+[tool.tytanic.default]
+ppi = 300
+max-delta = 0
+max-deviations = 0
