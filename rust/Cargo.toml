@@ -1,0 +1,28 @@
+[package]
+name = "spryst"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+# Same package and version as Typst uses.
+ciborium = "0.2.1"
+image = { version = "0.25", default-features = false, features = [
+  "png",
+  "jpeg",
+  "gif",
+  "webp",
+] }
+serde = { version = "1.0", features = ["derive"] }
+serde_bytes = "0.11"
+thiserror = "2.0.18"
+wasm-minimal-protocol = "0.2.0"
+
+[profile.release]
+lto = true        # Enable link-time optimization
+strip = true      # Strip symbols from binary*
+opt-level = 'z'   # Optimize for size
+codegen-units = 1 # Reduce number of codegen units to increase optimizations
+panic = 'abort'   # Abort on panic
