@@ -20,12 +20,12 @@
 /// Internal.
 ///
 /// Pass either `rows` + `cols` (grid mode) or `tile-width` + `tile-height`
-/// (pixel mode).
+/// (size mode).
 ///
 /// - rows (none, int): number of sprite rows (grid mode)
 /// - cols (none, int): number of sprite columns (grid mode)
-/// - tile-width (none, int): width of a single sprite in pixels (pixel mode)
-/// - tile-height (none, int): height of a single sprite in pixels (pixel mode)
+/// - tile-width (none, int): width of a single sprite in pixels (size mode)
+/// - tile-height (none, int): height of a single sprite in pixels (size mode)
 /// - margin (int, array): border between the sheet edges and the outermost tiles
 /// - spacing (int, array): gap between adjacent tiles
 ///
@@ -80,7 +80,7 @@
 ///
 /// ```typ
 ///  #let data = read("sheet.png", encoding: none)
-///  #let sheet = split(data, rows: 4, cols: 4)
+///  #let sheet = spritesheet(data, rows: 4, cols: 4)
 ///  #grid(
 ///    columns: sheet.cols,
 ///    ..sheet.sprites.map(sprite-image),
@@ -92,7 +92,7 @@
 ///   `tile-width`, `tile-height`, `margin`, `spacing`)
 ///
 /// -> dictionary
-#let split(data, ..args) = {
+#let spritesheet(data, ..args) = {
   cbor(_plugin.split(data, _spec(..args.named())))
 }
 
@@ -122,7 +122,7 @@
   cbor(_plugin.sprite(data, _spec(..args.named()), cbor.encode(selector)))
 }
 
-/// Turns a sprite dictionary (from `split` or `sprite`) into an `image`.
+/// Turns a sprite dictionary (from `spritesheet` or `sprite`) into an `image`.
 ///
 /// ```typ
 ///  #sprite-image(sprite(data, index: 0, rows: 4, cols: 4), width: 32pt)
@@ -136,35 +136,36 @@
 #let sprite-image(spr, ..args) = image(spr.png, format: "png", ..args)
 
 
-/// Builds an indexer function for a given spritesheet, which can be accessed by
-/// either a single index or a (row, col) pair. This is a convenience wrapper around
-/// `sprite` and `sprite-image` for easy access to sprites without manually slicing the
-/// sheet first. For example:
+/// Builds an indexer for an already-sliced spritesheet, addressing sprites by
+/// either a single row-major index or a `(row, col)` pair. A convenience wrapper
+/// around `sprite-image` so you can pull sprites straight from a `spritesheet`
+/// result without indexing into `.sprites` yourself. For example:
 ///
 /// ```typ
-///   #let split_sheet = split(
+///   #let sheet = spritesheet(
 ///     read("sheet.png", encoding: none),
 ///     tile-width: 32,
 ///     tile-height: 32,
 ///   )
-///   #let get-sprite = make-getter(split_sheet)
-//
+///   #let get-sprite = make-getter(sheet)
+///
 ///   #get-sprite(5, width: 32pt)
 ///   #get-sprite(1, 2, width: 32pt)
 /// ```
 ///
-/// - spr (dictionary): the output of `split` for a given sheet
+/// - sheet (dictionary): the output of `spritesheet` for a given sheet
+///
 /// -> function
-#let make-getter(spr) = {
+#let make-getter(sheet) = {
   let get(..args) = {
     let named = args.named()
     let idx = args.pos()
 
     if idx.len() == 1 {
-      sprite-image(spr.sprites.at(..idx), ..named)
+      sprite-image(sheet.sprites.at(idx.at(0)), ..named)
     } else if idx.len() == 2 {
-      let (row, col) = (..idx,)
-      sprite-image(sprite(spr.sheet, row: row, col: col), ..named)
+      let (row, col) = (idx.at(0), idx.at(1))
+      sprite-image(sheet.sprites.at(row * sheet.cols + col), ..named)
     } else {
       panic(
         "Invalid sprite selector. Use either an index or a (row, col) pair.",

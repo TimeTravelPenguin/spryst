@@ -12,19 +12,13 @@ assets:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    mkdir -p typst/assets
-    cp -r assets typst/
-    cd typst/assets
+    cd assets
     
-    typst c --root .. --ppi 300 sheet.typ sheet.png
-    typst c --root .. --ppi 300 banner.typ banner.png
-    typst c --root .. --ppi 300 --input "banner=github" banner.typ banner_1280_640.png
+    typst c --ppi 300 sheet.typ sheet.png
+    typst c --ppi 300 banner.typ banner.png
+    typst c --ppi 300 --input "banner=github" banner.typ banner_1280_640.png
     
     oxipng *.png
-    cp *.png ../../assets/
-
-    cd ../..
-    rm -rf typst/assets
 
 build:
     cargo build \

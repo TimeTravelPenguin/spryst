@@ -1,12 +1,9 @@
-#import "../src/lib.typ": make-getter, split
-#import "sheet.typ": cell_px
-
-#let (width, height, margin) = if (
+#let (width, height, margin, text-sz) = if (
   sys.inputs.at("banner", default: none) == "github"
 ) {
-  (1280in / 300, 640in / 300, 0em)
+  (1280in / 300, 640in / 300, 0em, 0.9em)
 } else {
-  (2560in / 300, auto, 2em)
+  (2560in / 300, auto, 1.5em, 1.2em)
 }
 
 #set page(
@@ -16,63 +13,107 @@
   fill: white,
 )
 
-#set text(size: 2em)
+#let CELL_SZ = 1.5em
+#set text(size: text-sz)
 
-#let sheet = read("sheet.png", encoding: none)
-#let split_sheet = split(sheet, tile-width: cell_px, tile-height: cell_px)
-#let sprites = split_sheet.sprites
+#let typ-text-size = CELL_SZ * 0.85
+#let typ-text = text.with(
+  font: "Buenard",
+  weight: "bold",
+  size: typ-text-size,
+  top-edge: "bounds",
+  bottom-edge: "bounds",
+  fill: rgb("#239dad"),
+)
 
-#let sprite_idxs = (18, 15, 17, 24, 18, 19)
-
-#let sheet = {
-  let selected = sprite_idxs
-    .map(idx => sprites.at(idx))
-    .map(spr => (spr.col, spr.row))
-
-  grid(
-    columns: 9,
-    column-gutter: 0em,
-    stroke: (x, y) => if (x, y) in selected {
-      (thickness: 0.05em, paint: rgb("#C92B89"))
+#let alphanum = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+#let chars = (
+  alphanum
+    .clusters()
+    .map(typ-text)
+    .enumerate()
+    .map(((idx, c)) => if idx == 18 {
+      box(width: CELL_SZ, height: CELL_SZ, align(center + horizon, [
+        #place(top + right, dx: -0.1em, dy: 0.1em, text(
+          size: 0.3em,
+          fill: rgb("#C92B89"),
+          `x2`,
+        ))
+        #c
+      ]))
     } else {
-      none
-    },
-    ..sprites.map(spr => image(spr.png, height: 0.5em)),
-  )
-}
+      box(width: CELL_SZ, height: CELL_SZ, align(center + horizon, c))
+    })
+)
 
-#let get-sprite = make-getter(split(
-  read("sheet.png", encoding: none),
-  tile-width: cell_px,
-  tile-height: cell_px,
-))
+
+#let cells = block(
+  // stroke: 0.05em + gray,
+  {
+    let selected = "SPRYST".clusters().map(c => alphanum.position(c))
+
+    grid(
+      columns: 9,
+      column-gutter: 0em,
+      stroke: (x, y) => {
+        let idx = x + 9 * y
+        if idx in selected {
+          (thickness: 0.05em, paint: rgb("#C92B89"), dash: "densely-dashed")
+        } else {
+          none
+        }
+      },
+      ..chars,
+    )
+  },
+)
 
 #let spryst = grid(
-  columns: 7,
-  column-gutter: 0em,
-  // ..sprite_idxs.map(idx => image(sprites.at(idx).png, height: 1.5em)),
-  ..sprite_idxs.map(idx => get-sprite(idx, height: 1.5em)),
+  columns: 6,
+  .."SPRYST"
+    .clusters()
+    .map(typ-text.with(size: typ-text-size * 1.5))
+    .map(c => box(
+      stroke: (
+        thickness: 0.04em,
+        paint: gray,
+        dash: "densely-dashed",
+      ),
+      width: CELL_SZ * 1.5,
+      height: CELL_SZ * 1.5,
+      align(
+        center + horizon,
+        c,
+      ),
+    ))
 )
 
-#let split_text = text(
-  "split",
-  font: "Fira Code",
-  size: 1.5em,
-  fill: rgb("#005ECB"),
-)
+#show "spritesheet": set text(fill: rgb("#005ECB"))
+#show "sheet-png": set text(fill: rgb("#C92B89"))
+#show "let": set text(fill: rgb("#F2001F"))
+#show regex("[()]"): set text(fill: rgb("#0082DF"))
+#show "=": set text(fill: rgb("#E24C00"))
+#show "#": set text(fill: rgb("#8861F3"))
 
-#let parens = {
-  set text(fill: rgb("#0082DF"), size: 1.5em)
-  $ (#sheet) $
-}
+#let let_text = stack(dir: ltr, ```typ #let sheet-png = ```, scale(
+  cells,
+  75%,
+  reflow: true,
+))
+
+#let call_text = ```typ #spritesheet(sheet-png)```
 
 #set align(center + horizon)
 #stack(
-  dir: ltr,
-  split_text,
-  parens,
-  text(size: 1.5em, fill: luma(160))[#sym.arrow.r],
-  spryst,
+  dir: ttb,
+  spacing: 1em,
+  let_text,
+  stack(
+    dir: ltr,
+    spacing: 0.3em,
+    call_text,
+    text(size: 1.5em, fill: luma(160))[#sym.arrow.r],
+    spryst,
+  ),
 )
-
 

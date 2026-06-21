@@ -13,7 +13,7 @@ plugin works out the rest, honouring any border (`margin`) and inter-tile gap (`
 
 - **Grid mode** — give `rows` and `cols`; the tile size is derived and must divide the
   usable area evenly.
-- **Pixel mode** — give `tile-width` and `tile-height`; the row/column counts are derived
+- **Size mode** — give `tile-width` and `tile-height`; the row/column counts are derived
   as the number of whole tiles that fit.
 
 ## Usage
@@ -34,7 +34,7 @@ The easiest entry point is the `spryst.typ` wrapper:
 #spryst.sprite-image(spryst.sprite(data, row: 1, col: 1, rows: 4, cols: 4))
 
 // Or slice the whole sheet and lay every sprite out.
-#let sheet = spryst.split(data, rows: 4, cols: 4)
+#let sheet = spryst.spritesheet(data, rows: 4, cols: 4)
 #grid(
   columns: sheet.cols,
   ..sheet.sprites.map(spr => spryst.sprite-image(spr, width: 24pt)),
@@ -48,19 +48,20 @@ Both are optional and default to `0`. Pass a single number to apply it to both a
 the outermost tiles; `spacing` is the gap between adjacent tiles.
 
 ```typ
-#spryst.split(data, rows: 4, cols: 4, margin: 1, spacing: (2, 2))
+#spryst.spritesheet(data, rows: 4, cols: 4, margin: 1, spacing: (2, 2))
 ```
 
-### Known tile size
+### Size mode
 
 ```typ
-#spryst.split(data, tile-width: 16, tile-height: 16)
+#spryst.spritesheet(data, tile-width: 16, tile-height: 16)
 ```
 
 ## Plugin functions (low level)
 
 Each function takes the sheet bytes plus CBOR-encoded arguments and returns a CBOR-encoded
-response. Errors are returned as `Err` and surfaced by Typst as diagnostics.
+response. Errors are returned as `Err` and surfaced by Typst as diagnostics. The
+high-level `spritesheet` wrapper above is a thin convenience layer over `split`.
 
 | Function                        | Arguments                                      | Returns                                                                     |
 | ------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------- |
@@ -79,7 +80,7 @@ string (decoded directly to Typst `bytes`).
 
 ```sh
 just install   # one-time: wasm targets + wasi-stub
-just build     # builds build/spryst.wasm
+just build     # builds typst/wasm/spryst.wasm
 ```
 
 The Rust logic is unit-tested on the host:

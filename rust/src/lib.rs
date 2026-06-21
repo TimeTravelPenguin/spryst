@@ -19,7 +19,7 @@
 //!
 //! - **grid mode** — `rows` and `cols`; the tile size is derived and must divide
 //!   the usable area evenly.
-//! - **pixel mode** — `tile_width` and `tile_height`; the row/column counts are
+//! - **size mode** — `tile_width` and `tile_height`; the row/column counts are
 //!   derived as the number of whole tiles that fit.
 //!
 //! Both modes honour an optional `margin` (a border between the sheet edges and
@@ -163,7 +163,7 @@ mod tests {
     }
 
     #[test]
-    fn resolves_pixel_mode_with_floor() {
+    fn resolves_size_mode_with_floor() {
         let bytes = sheet(4, 2, 16); // 64x32
         let img = decode_image(&bytes).unwrap();
         let (w, h) = img.dimensions();

@@ -3,7 +3,7 @@
 /// How to carve a sheet into sprites.
 ///
 /// Provide *either* `rows` + `cols` (grid mode) *or* `tile_width` +
-/// `tile_height` (pixel mode). Supplying both pairs, or neither, is an error.
+/// `tile_height` (size mode). Supplying both pairs, or neither, is an error.
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct SliceSpec {
     /// Number of sprite rows (grid mode).
@@ -14,11 +14,11 @@ pub struct SliceSpec {
     #[serde(default)]
     pub cols: Option<u32>,
 
-    /// Width of a single sprite in pixels (pixel mode).
+    /// Width of a single sprite in pixels (size mode).
     #[serde(default)]
     pub tile_width: Option<u32>,
 
-    /// Height of a single sprite in pixels (pixel mode).
+    /// Height of a single sprite in pixels (size mode).
     #[serde(default)]
     pub tile_height: Option<u32>,
 

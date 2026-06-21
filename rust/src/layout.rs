@@ -200,7 +200,7 @@ fn tile_size(
     Ok(usable / count)
 }
 
-/// Pixel mode: how many whole tiles of `tile` pixels fit along one axis.
+/// Size mode: how many whole tiles of `tile` pixels fit along one axis.
 fn tile_fit(length: u32, tile: u32, margin: u32, spacing: u32) -> Result<u32, SpriteError> {
     if tile == 0 {
         return Err(SpriteError::ZeroDimension);

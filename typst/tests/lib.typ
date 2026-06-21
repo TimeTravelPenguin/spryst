@@ -15,7 +15,7 @@
 // Tests compile at `PPI` (mirrored in `typst.toml`); at that resolution a
 // `CELL_PX`-pixel cell measures `CELL_PX / PPI * 72pt`, landing on whole pixels.
 
-#import "/src/lib.typ": split
+#import "/src/lib.typ": spritesheet
 
 #let ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 #let NUMERIC = "0123456789"
@@ -123,20 +123,20 @@
 
 /// Slices `data` into sprites with the spryst plugin and re-lays them into a
 /// grid — the spryst side of a reassemble test. `mode` selects how the grid is
-/// described to the plugin: `"pixel"` passes the tile size, `"grid"` passes the
+/// described to the plugin: `"size"` passes the tile size, `"grid"` passes the
 /// row/column counts.
 ///
 /// - data (bytes): the fixture PNG
 /// - cols (int): the sheet's column count (only used in `"grid"` mode)
 /// - sep (bool): whether the fixture was rendered in `sep` mode (only `"grid"`)
-/// - mode (str): `"pixel"` or `"grid"`
+/// - mode (str): `"size"` or `"grid"`
 ///
 /// -> content
-#let rebuilt(data, cols, sep: false, mode: "pixel") = {
+#let rebuilt(data, cols, sep: false, mode: "size") = {
   let sheet = if mode == "grid" {
-    split(data, rows: row-count(cols, sep: sep), cols: cols)
+    spritesheet(data, rows: row-count(cols, sep: sep), cols: cols)
   } else {
-    split(data, tile-width: CELL_PX, tile-height: CELL_PX)
+    spritesheet(data, tile-width: CELL_PX, tile-height: CELL_PX)
   }
 
   let rows = calc.ceil(sheet.sprites.len() / sheet.cols)
