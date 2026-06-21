@@ -39,6 +39,11 @@ The easiest entry point is the `spryst.typ` wrapper:
   columns: sheet.cols,
   ..sheet.sprites.map(spr => spryst.sprite-image(spr, width: 24pt)),
 )
+
+// Slice once, then pull sprites by index or (row, col) on demand.
+#let get-sprite = spryst.make-getter(sheet)
+#get-sprite(5, width: 32pt)
+#get-sprite(1, 2, width: 32pt)
 ```
 
 ### Margin and spacing
