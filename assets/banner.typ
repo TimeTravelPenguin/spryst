@@ -3,7 +3,8 @@
 ) {
   (1280in / 300, 640in / 300, 0em, 0.9em)
 } else {
-  (2560in / 300, auto, 1.5em, 1.2em)
+  // (2560in / 300, auto, 1.5em, 1.2em)
+  (auto, auto, 1.5em, 1.2em)
 }
 
 #set page(
