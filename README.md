@@ -1,5 +1,7 @@
 # spryst
 
+![spryst banner](./typst/assets/banner.png)
+
 A [Typst](https://typst.app) WASM plugin for slicing a spritesheet into its individual
 sprites — give it an image and a grid, get back ready-to-place sprites.
 

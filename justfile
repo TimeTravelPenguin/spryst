@@ -5,6 +5,18 @@ install:
     rustup target add wasm32-wasip1
     cargo binstall wasi-stub
 
+assets:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    cd typst/assets 
+    
+    typst c --root .. --ppi 300 sheet.typ sheet.png
+    typst c --root .. --ppi 300 banner.typ banner.png
+    typst c --root .. --ppi 300 --input "banner=github" banner.typ banner_1280_640.png
+    
+    oxipng *.png
+
 build:
     cargo build \
       --release \
