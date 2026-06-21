@@ -2,7 +2,7 @@
 name = "spryst"
 version = "0.1.0"
 entrypoint = "src/lib.typ"
-authors = ["Phillip Smith"]
+authors = ["TimeTravelPenguin <@TimeTravelPenguin>"]
 license = "MIT"
 description = "Slice a spritesheet into its individual sprites."
 
