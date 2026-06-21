@@ -1,3 +1,6 @@
+VER := `dasel -i toml 'package.version' < typst/typst.toml | tr -d "'"`
+DIST_DIR := "dist/spryst/" + VER
+LOCAL_PACKAGES_MACOS := "$HOME/Library/Application Support/typst/packages/local"
 WASM_OUT := "./typst/wasm/spryst.wasm"
 
 install:
@@ -9,13 +12,19 @@ assets:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    cd typst/assets 
+    mkdir -p typst/assets
+    cp -r assets typst/
+    cd typst/assets
     
     typst c --root .. --ppi 300 sheet.typ sheet.png
     typst c --root .. --ppi 300 banner.typ banner.png
     typst c --root .. --ppi 300 --input "banner=github" banner.typ banner_1280_640.png
     
     oxipng *.png
+    cp *.png ../../assets/
+
+    cd ../..
+    rm -rf typst/assets
 
 build:
     cargo build \
@@ -28,7 +37,25 @@ build:
     cp rust/target/wasm32-wasip1/release/spryst.wasm {{ WASM_OUT }}
     wasi-stub {{ WASM_OUT }} -o {{ WASM_OUT }}
 
+bundle: build assets
+    rm -rf dist
+    mkdir -p "{{ DIST_DIR }}/assets"
+
+    cp -r typst/* "{{ DIST_DIR }}"
+    cp LICENSE "{{ DIST_DIR }}"
+    cp README.md "{{ DIST_DIR }}"
+    cp assets/banner.png "{{ DIST_DIR }}/assets/"
+
+    rm -rf "{{ DIST_DIR }}/tests"
+
+[macos]
+install-dist: bundle
+    rm -rf "{{ LOCAL_PACKAGES_MACOS }}/spryst"
+    mkdir -p "{{ LOCAL_PACKAGES_MACOS }}/spryst"
+    cp -r "{{ DIST_DIR }}" "{{ LOCAL_PACKAGES_MACOS }}/spryst"
+
 clean:
+    rm -rf dist
     rm -rf typst/wasm
     rm -rf rust/target
 

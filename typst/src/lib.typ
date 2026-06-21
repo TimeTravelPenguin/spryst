@@ -60,8 +60,10 @@
 /// any sprites. The returned dictionary has `sheet_width`, `sheet_height`,
 /// `rows`, `cols`, `tile_width`, `tile_height`, and `count`.
 ///
+/// ```typ
 ///  #let data = read("sheet.png", encoding: none)
 ///  #sheet-info(data, rows: 4, cols: 4)
+/// ```
 ///
 /// - data (bytes): the raw spritesheet image (PNG, JPEG, GIF, or WebP)
 /// - args (arguments): slice arguments forwarded to `_spec` (`rows`, `cols`,
@@ -76,12 +78,14 @@
 /// `tile_width`, `tile_height`, and `sprites` — an array of sprite dictionaries,
 /// each with `row`, `col`, `x`, `y`, `width`, `height`, and `png`.
 ///
+/// ```typ
 ///  #let data = read("sheet.png", encoding: none)
 ///  #let sheet = split(data, rows: 4, cols: 4)
 ///  #grid(
 ///    columns: sheet.cols,
 ///    ..sheet.sprites.map(sprite-image),
 ///  )
+/// ```
 ///
 /// - data (bytes): the raw spritesheet image (PNG, JPEG, GIF, or WebP)
 /// - args (arguments): slice arguments forwarded to `_spec` (`rows`, `cols`,
@@ -96,8 +100,10 @@
 /// `row` + `col`. Returns a sprite dictionary with `row`, `col`, `x`, `y`,
 /// `width`, `height`, and `png`.
 ///
+/// ```typ
 ///  #let data = read("sheet.png", encoding: none)
 ///  #sprite-image(sprite(data, index: 5, rows: 4, cols: 4))
+/// ```
 ///
 /// - data (bytes): the raw spritesheet image (PNG, JPEG, GIF, or WebP)
 /// - index (none, int): row-major, zero-based sprite index
@@ -118,7 +124,9 @@
 
 /// Turns a sprite dictionary (from `split` or `sprite`) into an `image`.
 ///
+/// ```typ
 ///  #sprite-image(sprite(data, index: 0, rows: 4, cols: 4), width: 32pt)
+/// ```
 ///
 /// - spr (dictionary): a sprite dictionary containing a `png` field
 /// - args (arguments): extra named arguments forwarded to `image` (e.g.
@@ -126,3 +134,43 @@
 ///
 /// -> content
 #let sprite-image(spr, ..args) = image(spr.png, format: "png", ..args)
+
+
+/// Builds an indexer function for a given spritesheet, which can be accessed by
+/// either a single index or a (row, col) pair. This is a convenience wrapper around
+/// `sprite` and `sprite-image` for easy access to sprites without manually slicing the
+/// sheet first. For example:
+///
+/// ```typ
+///   #let split_sheet = split(
+///     read("sheet.png", encoding: none),
+///     tile-width: 32,
+///     tile-height: 32,
+///   )
+///   #let get-sprite = make-getter(split_sheet)
+//
+///   #get-sprite(5, width: 32pt)
+///   #get-sprite(1, 2, width: 32pt)
+/// ```
+///
+/// - spr (dictionary): the output of `split` for a given sheet
+/// -> function
+#let make-getter(spr) = {
+  let get(..args) = {
+    let named = args.named()
+    let idx = args.pos()
+
+    if idx.len() == 1 {
+      sprite-image(spr.sprites.at(..idx), ..named)
+    } else if idx.len() == 2 {
+      let (row, col) = (..idx,)
+      sprite-image(sprite(spr.sheet, row: row, col: col), ..named)
+    } else {
+      panic(
+        "Invalid sprite selector. Use either an index or a (row, col) pair.",
+      )
+    }
+  }
+
+  get
+}

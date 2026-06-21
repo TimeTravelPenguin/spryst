@@ -1,8 +1,8 @@
-#let CELL_PX = 128
+#let cell_px = 128
 #let cols = 9
 #let ppi = 300
 #let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".clusters()
-#let cell = CELL_PX / ppi * 72pt
+#let cell = cell_px / ppi * 72pt
 #let rows = calc.ceil(chars.len() / cols)
 
 #let typ-text = text.with(

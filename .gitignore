@@ -6,3 +6,4 @@ typst/tests/**/out
 typst/tests/**/diff
 
 .DS_Store
+dist

@@ -1,6 +1,6 @@
 # spryst
 
-![spryst banner](./typst/assets/banner.png)
+![spryst banner](./assets/banner.png)
 
 A [Typst](https://typst.app) WASM plugin for slicing a spritesheet into its individual
 sprites — give it an image and a grid, get back ready-to-place sprites.
@@ -51,7 +51,7 @@ the outermost tiles; `spacing` is the gap between adjacent tiles.
 #spryst.split(data, rows: 4, cols: 4, margin: 1, spacing: (2, 2))
 ```
 
-### Pixel mode
+### Known tile size
 
 ```typ
 #spryst.split(data, tile-width: 16, tile-height: 16)

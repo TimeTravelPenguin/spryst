@@ -1,5 +1,5 @@
-#import "../src/lib.typ": split
-#import "sheet.typ": CELL_PX
+#import "../src/lib.typ": make-getter, split
+#import "sheet.typ": cell_px
 
 #let (width, height, margin) = if (
   sys.inputs.at("banner", default: none) == "github"
@@ -19,7 +19,8 @@
 #set text(size: 2em)
 
 #let sheet = read("sheet.png", encoding: none)
-#let sprites = split(sheet, tile-width: CELL_PX, tile-height: CELL_PX).sprites
+#let split_sheet = split(sheet, tile-width: cell_px, tile-height: cell_px)
+#let sprites = split_sheet.sprites
 
 #let sprite_idxs = (18, 15, 17, 24, 18, 19)
 
@@ -40,12 +41,18 @@
   )
 }
 
+#let get-sprite = make-getter(split(
+  read("sheet.png", encoding: none),
+  tile-width: cell_px,
+  tile-height: cell_px,
+))
+
 #let spryst = grid(
   columns: 7,
   column-gutter: 0em,
-  ..sprite_idxs.map(idx => image(sprites.at(idx).png, height: 1.5em)),
+  // ..sprite_idxs.map(idx => image(sprites.at(idx).png, height: 1.5em)),
+  ..sprite_idxs.map(idx => get-sprite(idx, height: 1.5em)),
 )
-
 
 #let split_text = text(
   "split",
