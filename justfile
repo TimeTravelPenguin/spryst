@@ -20,6 +20,10 @@ assets:
     
     oxipng *.png
 
+examples:
+  typst c examples/*.typ --root .. --format png --ppi 300
+  oxipng examples/*.png
+
 build:
     cargo build \
       --release \
