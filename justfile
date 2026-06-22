@@ -3,6 +3,8 @@ DIST_DIR := "dist/spryst/" + VER
 LOCAL_PACKAGES_MACOS := "$HOME/Library/Application Support/typst/packages/local"
 WASM_OUT := "./typst/wasm/spryst.wasm"
 
+mod package "./justscripts/package"
+
 install:
     rustup target add wasm32-unknown-unknown
     rustup target add wasm32-wasip1

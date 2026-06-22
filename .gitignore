@@ -7,3 +7,4 @@ typst/tests/**/diff
 
 .DS_Store
 dist
+packages
