@@ -46,7 +46,6 @@ bundle: build
     cp -r typst/* "{{ DIST_DIR }}"
     cp LICENSE "{{ DIST_DIR }}"
     cp README.md "{{ DIST_DIR }}"
-    cp assets/banner.png "{{ DIST_DIR }}/assets/"
 
     rm -rf "{{ DIST_DIR }}/tests"
 

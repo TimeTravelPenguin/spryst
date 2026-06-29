@@ -1,6 +1,6 @@
 # spryst
 
-![spryst banner](./assets/banner.png)
+![spryst banner](https://raw.githubusercontent.com/TimeTravelPenguin/spryst/refs/heads/main/assets/banner.png)
 
 [![Typst Package](https://img.shields.io/badge/dynamic/toml?url=https://raw.githubusercontent.com/TimeTravelPenguin/spryst/refs/heads/main/typst/typst.toml&query=%24.package.version&prefix=v&logo=typst&label=package&color=239DAD)](https://typst.app/universe/package/spryst)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/TimeTravelPenguin/spryst/blob/main/LICENSE)
