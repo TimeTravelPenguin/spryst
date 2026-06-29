@@ -24,7 +24,7 @@ plugin works out the rest, honouring any border (`margin`) and inter-tile gap (`
 Below are some example uses for using Spryst.
 
 ```typ
-#import "@preview/spryst:0.1.0"
+#import "@preview/spryst:0.1.1"
 
 #let data = read("spritesheet.png", encoding: none)
 
