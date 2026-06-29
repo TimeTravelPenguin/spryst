@@ -26,7 +26,7 @@ examples:
   typst c examples/*.typ --root .. --format png --ppi 300
   oxipng examples/*.png
 
-build:
+_build:
     cargo build \
       --release \
       --target wasm32-wasip1 \
@@ -37,7 +37,9 @@ build:
     cp rust/target/wasm32-wasip1/release/spryst.wasm {{ WASM_OUT }}
     wasi-stub {{ WASM_OUT }} -o {{ WASM_OUT }}
 
-bundle: build assets
+build: _build assets examples
+
+bundle: build
     rm -rf dist
     mkdir -p "{{ DIST_DIR }}/assets"
 
@@ -58,6 +60,7 @@ clean:
     rm -rf dist
     rm -rf typst/wasm
     rm -rf rust/target
+    rm -f examples/*.png
 
 # Render the spritesheet PNG fixtures the Typst tests slice (commit the result).
 # Re-run after changing the cases, the glyph set, or PPI.
