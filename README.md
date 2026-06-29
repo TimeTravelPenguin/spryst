@@ -18,10 +18,10 @@ plugin works out the rest, honouring any border (`margin`) and inter-tile gap (`
 
 ## Usage
 
-The easiest entry point is the `spryst.typ` wrapper:
+Below are some example uses for using Spryst.
 
 ```typ
-#import "spryst.typ"
+#import "@preview/spryst:0.1.0"
 
 #let data = read("spritesheet.png", encoding: none)
 

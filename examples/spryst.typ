@@ -1,4 +1,4 @@
-#import "@local/spryst:0.1.0": make-getter, spritesheet
+#import "@preview/spryst:0.1.0": make-getter, spritesheet
 
 #set page(width: auto, height: auto)
 
