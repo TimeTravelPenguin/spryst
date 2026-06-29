@@ -39,7 +39,7 @@ _build:
 
 build: _build assets examples
 
-bundle: build
+bundle: _build assets
     rm -rf dist
     mkdir -p "{{ DIST_DIR }}/assets"
 
